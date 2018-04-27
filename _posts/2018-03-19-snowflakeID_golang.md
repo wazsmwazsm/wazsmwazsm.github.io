@@ -5,9 +5,6 @@ date:   2018-03-19 17:50:00
 categories: golang
 ---
 
-# Twitter snowflake ID 算法之 golang 实现
-
-
 ## 是什么？
 
 snowflake ID 算法是 twitter 使用的唯一 ID 生成算法，为了满足 Twitter 每秒上万条消息的请求，使每条消息有唯一、有一定顺序的 ID ，且支持分布式生成。
@@ -18,7 +15,7 @@ snowflake ID 算法是 twitter 使用的唯一 ID 生成算法，为了满足 Tw
 snowflake ID 的结构是一个 64 bit 的 int 型数据。
 
 如图所示 :
-![snowflake-64bit](/images/2018-03-19-snowflakeID_golang-1.jpg)
+![snowflake-64bit]({{ site.baseurl }}/assets/images/2018-03-19-snowflakeID_golang-1.jpg)
 
 1 bit：不使用，可以是 1 或 0
 

@@ -1,14 +1,14 @@
 # Setup
 title:        Qin Blog
 tagline:      一个技术博客
-baseurl:      ""
+baseurl:      "/QinBlog"
 paginate:     1
-locale:       "en"
+locale:       "zh-CN"
 
 # About/contact
 author:
   name:       Author name
-  url:        http://yourhomepage.com 
+  url:        http://localhost/
 
 # Gems
 gems:
@@ -19,3 +19,7 @@ markdown: kramdown
 
 # local web server
 host: 0.0.0.0
+
+# paginate
+paginate: 1
+paginate_path: "/QinBlog/page:num"
