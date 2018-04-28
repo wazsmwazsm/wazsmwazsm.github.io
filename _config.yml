@@ -1,7 +1,7 @@
 # Setup
 title:        Qin Blog
 tagline:      一个技术博客
-# url:          "https://wazsmwazsm.github.io" 
+url:          "https://wazsmwazsm.github.io" 
 baseurl:      ""
 paginate:     1
 locale:       "zh-CN"
