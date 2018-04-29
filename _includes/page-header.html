@@ -1,21 +1,9 @@
 <section class="page-header">
   <h1 class="project-name">{{ site.title }}</h1>
   <h2 class="project-tagline">{{ site.tagline }}</h2>
-  
-  <div id="nav"> 
-      <ul> 
-          <li><a href="{{ site.baseurl }}" class="btn">首页</a></li> 
-          <li><a href="#" class="btn">文章</a> 
-            <ul class="btn"> 
-              {% for category in site.categories %}
-                <li><a href="#">{{ category.first }}</a></li> 
-              {% endfor %}
-            </ul> 
-          </li> 
-          <li><a href="#" class="btn">归档</a></li> 
-          <li><a href="#" class="btn">关于</a></li> 
-          <li><a href="#" class="btn">联系我</a></li> 
-      </ul> 
-  </div>
+  <a href="#" class="btn">分类</a> 
+  <a href="#" class="btn">归档</a> 
+  <a href="#" class="btn">关于</a> 
+  <a href="#" class="btn">联系我</a> 
   
 </section>
