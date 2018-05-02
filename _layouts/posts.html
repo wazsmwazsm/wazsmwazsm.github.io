@@ -1,0 +1,52 @@
+---
+layout: default
+---
+
+<div id="home">
+<h1>博文</h1>
+<ul class="posts">
+  {% for post in paginator.posts %}
+    <li>
+      {% assign date_format = site.cayman-blog.date_format | default: "%Y-%m-%d" %}
+      <span class="post-meta">{{ post.date | date: date_format }}</span>
+
+      <h2>
+          <a class="post-link" href="{{ post.url | relative_url }}" title="{{ post.title }}">{{ post.title | escape }}</a>
+      </h2>
+
+      <span>{{ post.excerpt | markdownify | truncatewords: 30 }}</span>
+
+      <p><a class="post-link" href="{{ post.url | relative_url }}" title="{{ post.title }}">see more...</a></p>
+    </li>
+  {% endfor %}
+</ul>
+
+{% if paginator.total_pages > 1 %}
+  <div class="pagination">
+  <ul>
+    {% if paginator.previous_page %}
+      <li><a href="{{ paginator.previous_page_path | prepend: site.baseurl | replace: '//', '/' }}">&laquo;</a></li>
+    {% else %}
+      <li><span>&laquo;</span></li>
+    {% endif %}
+
+    {% for page in (1..paginator.total_pages) %}
+      {% if page == paginator.page %}
+        <li><span>{{ page }}</span></li>
+      {% elsif page == 1 %}
+        <li><a href="{{ '/index.html' | prepend: site.baseurl | replace: '//', '/' }}">{{ page }}</a></li>
+      {% else %}
+        <li><a href="{{ site.paginate_path | prepend: site.baseurl | replace: '//', '/' | replace: ':num', page }}">{{ page }}</a></li>
+      {% endif %}
+    {% endfor %}
+
+    {% if paginator.next_page %}
+      <li><a href="{{ paginator.next_page_path | prepend: site.baseurl | replace: '//', '/' }}">&raquo;</a></li>
+    {% else %}
+      <li><span>&raquo;</span></li>
+    {% endif %}
+  </ul>
+  </div>
+{% endif %}
+
+</div>

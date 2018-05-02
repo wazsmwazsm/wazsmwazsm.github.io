@@ -1,0 +1,20 @@
+---
+layout: default
+title: 归档
+---
+<div id="archive">
+    <h1 class="title">{{ page.title }}</h1>
+    {% capture date_first %}{{ 'now' | date: '%Y-%m' }}{% endcapture %}
+    <ul>
+        {% for post in site.posts %}
+            {% capture date_last %}{{ post.date | date: '%Y-%m' }}{% endcapture %}
+            {% if date_first != date_last %}
+                {% assign date_first = date_last %}
+    </ul>
+    <h3>{{ date_last }}</h3>
+    <ul>
+            {% endif %}
+        <li class="fn-clear"><span>{{ post.date |  date: '%Y-%m-%d' }} -- </span><a href="{{site.url}}{{ post.url }}">{{ post.title }}</a></li>
+        {% endfor %}
+    </ul>
+</div>
