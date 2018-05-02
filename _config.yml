@@ -5,12 +5,18 @@ url:          "https://wazsmwazsm.github.io"
 baseurl:      ""
 paginate:     1
 locale:       "zh-CN"
+description: 一个技术博客
+keywords: Qin Blog
+about: <p><a href="http://qinblog.net">qinblog.net</a> 的作者, 此博客为 QinBlog 的 GitHub Pages 版本</p>
+ <p>喜欢折腾、分享</p>
 
+contact: <p><a href="mailto:942443360@qq.com">发邮件</a></p>
+ <p><a href="https://github.com/wazsmwazsm">GitHub</a></p>
 
 # About/contact
 author:
   name:       MrQin
-  url:        http://localhost/
+  url:        https://github.com/wazsmwazsm
 
 # Gems
 gems:
@@ -23,5 +29,5 @@ markdown: kramdown
 host: 0.0.0.0
 
 # paginate
-paginate: 1
+paginate: 10
 paginate_path: "/page:num"
