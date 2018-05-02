@@ -3,5 +3,6 @@ layout: default
 ---
 <h2>{{ page.title }}</h2>
 <p class="meta">{{ page.date | date: '%Y-%m-%d' }}</p>
+<p class="meta">分类 : <a href="{{ site.baseurl }}/category.html#{{ page.categories }}">{{ page.categories }}</a></p>
 
 {{ content }}

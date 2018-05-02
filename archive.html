@@ -8,6 +8,7 @@ title: 归档
     <ul>
         {% for post in site.posts %}
             {% capture date_last %}{{ post.date | date: '%Y-%m' }}{% endcapture %}
+            <!-- 如果文章日期和 date_first 不同, 将文章日期赋值给 date_first, 另起 ul 进行渲染 -->
             {% if date_first != date_last %}
                 {% assign date_first = date_last %}
     </ul>

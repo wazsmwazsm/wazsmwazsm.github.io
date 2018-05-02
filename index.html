@@ -6,6 +6,7 @@ title: {{ site.name }}
 <div id="home">
   <h1>博文</h1>
   <ul class="posts">
+    <!-- 分页文章渲染 -->
     {% for post in paginator.posts %}
       <li>
         {% assign date_format = site.cayman-blog.date_format | default: "%Y-%m-%d" %}
@@ -17,11 +18,11 @@ title: {{ site.name }}
   
         <span>{{ post.excerpt | markdownify | truncatewords: 30 }}</span>
   
-        <p><a class="post-link" href="{{ post.url | relative_url }}" title="{{ post.title }}">see more...</a></p>
+        <p><a class="post-link" href="{{ post.url | relative_url }}" title="{{ post.title }}">查看更多...</a></p>
       </li>
     {% endfor %}
   </ul>
-  
+  <!-- 分页控件显示 -->
   {% if paginator.total_pages > 1 %}
     <div class="pagination">
     <ul>
