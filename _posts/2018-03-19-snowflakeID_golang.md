@@ -15,7 +15,7 @@ snowflake ID 算法是 twitter 使用的唯一 ID 生成算法，为了满足 Tw
 snowflake ID 的结构是一个 64 bit 的 int 型数据。
 
 如图所示 :
-![snowflake-64bit]({{ site.baseurl }}/assets/images/2018-03-19-snowflakeID_golang-1.jpg)
+![snowflake-64bit](/assets/images/2018-03-19-snowflakeID_golang-1.jpg)
 
 1 bit：不使用，可以是 1 或 0
 

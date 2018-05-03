@@ -8,6 +8,7 @@ title: {{ site.name }}
   <ul class="posts">
     <!-- 分页文章渲染 -->
     {% for post in paginator.posts %}
+      <hr>
       <li>
         {% assign date_format = site.cayman-blog.date_format | default: "%Y-%m-%d" %}
         <span class="post-meta">{{ post.date | date: date_format }}</span>
@@ -16,9 +17,9 @@ title: {{ site.name }}
             <a class="post-link" href="{{ post.url | relative_url }}" title="{{ post.title }}">{{ post.title | escape }}</a>
         </h2>
   
-        <span>{{ post.excerpt | markdownify | truncatewords: 30 }}</span>
+        <span>{{ post.excerpt | markdownify | truncate: 255 }}</span>
   
-        <p><a class="post-link" href="{{ post.url | relative_url }}" title="{{ post.title }}">查看更多...</a></p>
+        <p><a class="post-link" href="{{ post.url | relative_url }}" title="{{ post.title }}">查看更多</a></p>
       </li>
     {% endfor %}
   </ul>

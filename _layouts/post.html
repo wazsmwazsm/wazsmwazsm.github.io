@@ -6,3 +6,12 @@ layout: default
 <p class="meta">分类 : <a href="{{ site.baseurl }}/category.html#{{ page.categories }}">{{ page.categories }}</a></p>
 
 {{ content }}
+
+<hr>
+
+{% if page.previous %}
+  <span>上一篇 : <a href="{{ page.previous.url }}">{{ page.previous.title }}</a></span><br>
+{% endif %}
+{% if page.next %}
+  <span>下一篇 : <a href="{{ page.next.url }}">{{ page.next.title }}</a></span>
+{% endif %}
