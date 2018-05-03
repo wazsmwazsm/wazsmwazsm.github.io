@@ -59,7 +59,7 @@ MVC 设计模式最初由 Trygve Reenskaug 这位挪威计算机科学家在 70 
 
 MVC2 图示
 
-![](/assets/images/2017-02-18-web_framework_mvc-3.png)
+![](/assets/images/2017-02-18-web_framework_mvc-3.jpg)
 
 在 MVC 2 模式下，Controller “掌管大权”，处理起了 model 和 view 之间的联系，model 和 view 变得互相不可见，无法单独通信了(当然这不是结果而是原因)。同时 MVC 2 也更好的解决了 MVC 在 Web 上的应用。
 
