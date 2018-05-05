@@ -1,9 +1,3 @@
----
-layout: post
-title:  "写一个特殊的查询构造器"
-date:   2018-05-5 23:43:58
-categories: PHP
----
 
 ## 前言
 
