@@ -5,6 +5,11 @@ title: 归档
 <div id="archive">
     <h1 class="title">{{ page.title }}</h1>
     {% capture date_first %}{{ 'now' | date: '%Y-%m' }}{% endcapture %}
+    <!-- 为当前月份显示归档标题 -->
+    {% capture post_date_first %}{{ site.posts[0].date | date: '%Y-%m' }}{% endcapture %}
+    {% if date_first == post_date_first %}
+        <h3>{{ site.posts[0].date | date: '%Y-%m' }}</h3>
+    {% endif %}
     <ul>
         {% for post in site.posts %}
             {% capture date_last %}{{ post.date | date: '%Y-%m' }}{% endcapture %}
