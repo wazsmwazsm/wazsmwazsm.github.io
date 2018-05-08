@@ -17,7 +17,7 @@ title: {{ site.name }}
             <a class="post-link" href="{{ post.url | relative_url }}" title="{{ post.title }}">{{ post.title | escape }}</a>
         </h2>
   
-        <span>{{ post.excerpt | markdownify | truncatewords: 20 }}</span>
+        <div><span>{{ post.excerpt | markdownify | truncatewords: 20}}</span></div>
   
         <p><a class="post-link" href="{{ post.url | relative_url }}" title="{{ post.title }}">查看更多</a></p>
       </li>

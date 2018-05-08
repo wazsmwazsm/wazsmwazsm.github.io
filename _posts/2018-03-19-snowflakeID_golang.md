@@ -3,6 +3,7 @@ layout: post
 title:  "Twitter snowflake ID 算法之 golang 实现"
 date:   2018-03-19 17:50:00
 categories: golang
+excerpt: snowflake ID 算法是 twitter 使用的唯一 ID 生成算法，为了满足 Twitter 每秒上万条消息的请求，使每条消息有唯一、有一定顺序的 ID ，且支持分布式生成。
 ---
 
 ## 是什么？

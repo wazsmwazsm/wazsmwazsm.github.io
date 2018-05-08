@@ -3,6 +3,8 @@ layout: post
 title:  "Web 框架的 MVC 符合标准的 MVC 吗？"
 date:   2017-02-18 15:20:58
 categories: WEB框架
+excerpt: MVC是什么：一种设计模式？一种解决方案？
+ MVC 设计模式最初由 Trygve Reenskaug 这位挪威计算机科学家在 70 年代提出并应用在 Xerox PARC 的 smalltalk 系统上，成功的将数据模型从系统内容中分离出来。MVC 设计模式普遍的应用在 GUI 应用程序上。
 ---
 
 ### 问题的开始

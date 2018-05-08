@@ -3,6 +3,7 @@ layout: post
 title:  "Laravel 创建自己的 Facade"
 date:   2017-06-04 22:06:59
 categories: WEB框架
+excerpt: laravel 提供了一个灵活的模式，那就是 facade 。框架内部的 DB、Auth、File 等功能也有相关的 facade 实现。那么，该如何写自己的 facade 呢？
 ---
 
 ## 前言
