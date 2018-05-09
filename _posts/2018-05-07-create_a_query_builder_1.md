@@ -162,7 +162,7 @@ cp composer.phar /usr/local/bin/composer # 将可执行文件放到已经设置�
 
 ```
 
-修改 composer.json ( 这里我的命名空间是 Drivers，所以设置为 Drivers 到 src 目录的映射 )，添加 autoload 字段，指定自动加载规范为 psr-4。
+修改 composer.json，添加 autoload 字段，指定自动加载规范为 psr-4 ( 这里我的命名空间是 Drivers，所以设置为 Drivers 到 src 目录的映射 )。
 
 ```json
 {
