@@ -182,11 +182,11 @@ cp composer.phar /usr/local/bin/composer # 将可执行文件放到已经设置�
 项目目录下新建 test 目录 (方便对源码做一些测试)，test 目录下新建 test.php，对基类进行测试
 
 ```php
-// 引入 composer 的字动加载文件
+// 引入 composer 的自动加载文件
 require_once dirname(dirname(__FILE__)) . '/vendor/autoload.php';
 // 使用基类
 use Drivers\PDODriver;
-// 使用你得数据库替换配置
+// 使用你的数据库替换配置
 $config = [
     'host'        => 'localhost',
     'port'        => '3306',
@@ -228,7 +228,7 @@ foreach ($results as $result) {
 
 由于 Mysql 的字符集、时区设置语句和其他数据库存在差异，同时拥有一些其它数据库没有的特性 (unix_socket 连接，严格模式等)，所以，Mysql 的驱动类有基类的功能，但又有异于基类的部分。
 
-Mysql 基础自基类，实现了 ConnectorInterface 接口，Mysql.php 代码如下：
+Mysql 继承自基类，实现了 ConnectorInterface 接口，Mysql.php 代码如下：
 
 ```php
 namespace Drivers;
@@ -285,11 +285,11 @@ class Mysql extends PDODriver implements ConnectorInterface
 修改 test.php
 
 ```php
-// 引入 composer 的字动加载文件
+// 引入 composer 的自动加载文件
 require_once dirname(dirname(__FILE__)) . '/vendor/autoload.php';
 // 使用 Mysql 驱动类
 use Drivers\Mysql;
-// 使用你得数据库替换配置
+// 使用你的数据库替换配置
 $config = [
     'host'        => 'localhost',
     'port'        => '3306',
@@ -315,7 +315,7 @@ foreach ($results as $result) {
 
 ## PostgreSql、Sqlite 驱动类的创建
 
-如 Mysql 驱动类的创建，这里就不再赘述，just show code
+PostgreSql、Sqlite 驱动类的创建和 Mysql 驱动类的创建类似，这里就不再赘述，just show code
 
 Pgsql.php 代码如下：
 
