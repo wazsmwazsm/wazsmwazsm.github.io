@@ -8,11 +8,11 @@ excerpt: 上一篇完成了代码结构的搭建和 PDO 的基础封装，这一
 
 ## 构造、执行第一条语句
 
-上一篇完成了代码结构的搭建和 PDO 的基础封装，这一篇我们来讲如何构造一个最基本的 SQL 语句并执行得到结果。
+上一篇完成了代码结构的搭建和 PDO 的基础封装，这一篇我们来讲如何构造一个最基本的 SQL 语句，并执行得到结果。
 
-**构造目标，query sql ："SELECT * FROM test_table;"**
+**query sql 构造目标：**"SELECT * FROM test_table;"
 
-**构造器执行语法：$drivers->table('test_table')->select('\*')->get();**
+**查询构造器执行语法构造目标：**$drivers->table('test_table')->select('\*')->get();
 
 我们回顾下 PDO 执行这个 query 语句的基本用法：
 
@@ -36,9 +36,9 @@ PDO::prepare() 方法提供了防注入、参数绑定的机制，可以指定�
 
 要构造 query sql 语句，那么不妨先观察一下它的基本构造：
 
-SELECT、 要查找的字段(列)、 FROM、 要查找的表、 关联子句、 条件子句、 分组子句、 排序子句、 limit 子句。
+> SELECT、 要查找的字段(列)、 FROM、 要查找的表、 关联子句、 条件子句、 分组子句、 排序子句、 limit 子句。
 
-除了 SELECT 和 FROM 是固定不变，我们只需构造好查询字段、表和一系列子句的字符串，然后按照 query sql 的语法拼接在一起即可。
+除了 SELECT 和 FROM 是固定不变，我们只需构造好查询字段、表名和一系列子句的字符串，然后按照 query sql 的语法拼接在一起即可。
 
 在基类 PDODriver.php 中添加属性作为构造字符串：
 
@@ -60,7 +60,7 @@ protected $_limit_str = '';    // limit 子句
 
 有了基本的构造字符串属性，可以开始构造一条 sql 了。
 
-为构建构建 sql 功能添加方法：
+添加 _buildQuery() 方法，用来构造 sql 字符串：
 
 ```php
 
@@ -77,7 +77,7 @@ protected function _buildQuery()
 
 ```
 
-添加 table() 方法：
+添加 table() 方法，用来设置表名：
 
 ```php
 public function table($table)
@@ -159,7 +159,7 @@ $config = [
     'strict'      => false,
 ];
 
-$driver = new PDODriver($config);
+$driver = new Mysql($config);
 // 执行 SELECT * FROM test_table; 的查询
 $results = $driver->table('test_table')->select('*')->get();
 
@@ -253,9 +253,81 @@ protected function _execute()
 
 ## 断线重连
 
+对于典型 web 环境而言，一次 sql 的查询已经随着 HTTP 的请求而结束，PHP 的垃圾回收功能会回收一次请求周期内的数据。而一次 HTTP 请求的时间也相对较短，基本不用考虑数据库断线的问题。
 
+但在常驻内存的环境下，尤其是单例模式下，数据库驱动类可能一直在内存中不被销毁。如果很长时间内没有对数据库进行访问的话，由数据库驱动类建立的数据库连接会被数据库作为空闲连接切断 (具体时间由数据库设置决定)，此时如果依旧使用旧的连接对象，会出现持续报错的问题。也就是说，我们要对数据库断线的情况进行处理，在检测到断线的同时新建一个连接代替旧的连接继续使用。
 
+在 PDO 中，数据库断线后继续访问会相应的抛出一个 PDOException 异常 (也可以是一个错误，由 PDO 的错误处理设置决定)。
+
+当数据库出现错误时，PDOException 实例的 errorInfo 属性中保存了错误的详细信息数组，第一个元素返回 SQLSTATE error code，第二个元素是具体驱动错误码，第三个元素是具体的错误信息。参见 [PDO::errorInfo](http://php.net/manual/en/pdo.errorinfo.php)
+
+**Mysql 断线相关的错误码有两个：**
+- [2006 CR_SERVER_GONE_ERROR](https://dev.mysql.com/doc/refman/5.5/en/error-messages-client.html#error_cr_server_gone_error) 
+- [2013 CR_SERVER_LOST](https://dev.mysql.com/doc/refman/5.5/en/error-messages-client.html#error_cr_server_lost)
+
+**PostgreSql 断线相关的错误码有一个：**
+
+当具体驱动错误码为 7 时 PostgreSql 断线 (此驱动错误码根据 PDOException 实测得出，暂时未找到相关文档)
+
+Sqlite 基于内存和文件，不存在断线一说，不做考虑。
+
+基类添加 _isTimeout() 方法：
+
+```php
+protected function _isTimeout(PDOException $e)
+{
+    // 异常信息满足断线条件，则返回 true
+    return (
+        $e->errorInfo[1] == 2006 ||   // MySQL server has gone away (CR_SERVER_GONE_ERROR)
+        $e->errorInfo[1] == 2013 ||   // Lost connection to MySQL server during query (CR_SERVER_LOST)
+        $e->errorInfo[1] == 7         // no connection to the server (for postgresql)
+    );
+}
+
+```
+
+修改 _execute() 方法，添加断线重连功能：
+
+```php
+protected function _execute()
+{
+    try {
+        $this->_pdoSt = $this->_pdo->prepare($this->_prepare_sql);
+        $this->_pdoSt->execute();
+        $this->_reset();
+    } catch (PDOException $e) {
+        // PDO 抛出异常，判断是否是数据库断线引起
+        if($this->_isTimeout($e)) { 
+            // 断线异常，清除旧的数据库连接，重新连接
+            $this->_closeConnection();
+            $this->_connect();
+            // 重试异常前的操作    
+            try {
+                $this->_pdoSt = $this->_pdo->prepare($this->_prepare_sql);
+                $this->_pdoSt->execute();
+                $this->_reset();
+            } catch (PDOException $e) {
+                // 还是失败、向外抛出异常
+                throw $e;
+            }
+        } else {
+            // 非断线引起的异常，向外抛出，交给外部逻辑处理
+            throw $e;
+        }
+    }
+}
+
+```
+
+**如何模拟断线？**
+
+在内存常驻模式中 (如 workerman 的 server 监听环境下)：
+
+- 访问数据库
+- 重启服务器的数据库软件
+- 再次访问数据库，看看是否能正常获取数据。
+
+Just do it
 
 ## 参考
-
-【1】[PDO](http://php.net/manual/en/book.pdo.php)
+【1】[PHP Document: The PDO class](http://php.net/manual/en/class.pdo.php)

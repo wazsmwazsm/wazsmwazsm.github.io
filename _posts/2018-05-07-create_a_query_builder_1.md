@@ -152,7 +152,7 @@ curl -sS https://getcomposer.org/installer | php # 下载源文件并执行 (注
 cp composer.phar /usr/local/bin/composer # 将可执行文件放到已经设置环境变量的目录中
 ```
 
-2、在你的项目目录中新建 src 目录，将所有的源码放到 src 中。在项目根目录中运行 composer init，随意填写一些基本信息后，会在根目录生成一个 composer.json 文件，内容类似：
+2、在你的项目目录中新建 src 目录，将所有的源码放到 src/Drivers/ 中。在项目根目录中运行 composer init，随意填写一些基本信息后，会在根目录生成一个 composer.json 文件，内容类似：
 
 ```json
 {
@@ -162,7 +162,7 @@ cp composer.phar /usr/local/bin/composer # 将可执行文件放到已经设置�
 
 ```
 
-修改 composer.json，添加 autoload 字段，指定自动加载规范为 psr-4 ( 这里我的命名空间是 Drivers，所以设置为 Drivers 到 src 目录的映射 )。
+修改 composer.json，添加 autoload 字段，指定自动加载规范为 psr-4 ( 这里我的命名空间是 Drivers，所以设置为 Drivers 到 src/Drivers 目录的映射 )。
 
 ```json
 {
@@ -170,16 +170,16 @@ cp composer.phar /usr/local/bin/composer # 将可执行文件放到已经设置�
     "require": {},
     "autoload": {
         "psr-4": {
-            "Drivers\\": "src/" 
+            "Drivers\\": "src/Drivers/" 
         }
     }
 }
 
 ```
 
-3、项目目录下运行 composer install，生成 vendor 目录，现在只要引入 vendor/autoload.php 后就可以直接通过命名空间自动加载 src 下的文件啦
+3、项目目录下运行 composer install，生成 vendor 目录，现在只要引入 vendor/autoload.php 后就可以直接通过命名空间自动加载 src/Drivers/ 下的文件啦
 
-项目目录下新建 test 目录 (方便对源码做一些测试)，test 目录下新建 test.php，对基类进行测试
+项目目录下新建 test 目录 (方便对源码做一些测试)，test 目录下新建 test.php，对基类进行测试 (此时代码简单暂不使用 phpunit)
 
 ```php
 // 引入 composer 的自动加载文件
@@ -212,11 +212,12 @@ foreach ($results as $result) {
 ```
 项目根目录/
     src/
-        ConnectorInterface.php
-        PDODriver.php
-        Mysql.php
-        Pgsql.php
-        Sqlite.php
+        Drivers/
+            ConnectorInterface.php
+            PDODriver.php
+            Mysql.php
+            Pgsql.php
+            Sqlite.php
     test/
         test.php
     vendor/
@@ -303,7 +304,7 @@ $config = [
     // 'unix_socket' => '/var/run/mysqld/mysqld.sock',
 ];
 
-$driver = new PDODriver($config);
+$driver = new Mysql($config);
 
 $results = $driver->query('select * from your_table');
 
@@ -423,5 +424,7 @@ class Sqlite extends PDODriver implements ConnectorInterface
 }
 
 ```
+
+PostgreSql 和 Sqlite 的测试这里就不详细说明了，感兴趣的可以自己写一下测试。
 
 实践出真知，那么测试看看吧！
