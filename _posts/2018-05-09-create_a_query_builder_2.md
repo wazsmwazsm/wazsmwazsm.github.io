@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "写一个“特殊”的查询构造器 - (二)"
+title:  "写一个“特殊”的查询构造器 - (二、第一条语句)"
 date:   2018-05-09 16:08:22
 categories: PHP
 excerpt: 上一篇完成了代码结构的搭建和 PDO 的基础封装，这一篇我们来讲如何构造一个最基本的 SQL 语句并执行得到结果。
@@ -10,9 +10,11 @@ excerpt: 上一篇完成了代码结构的搭建和 PDO 的基础封装，这一
 
 上一篇完成了代码结构的搭建和 PDO 的基础封装，这一篇我们来讲如何构造一个最基本的 SQL 语句，并执行得到结果。
 
-**query sql 构造目标：**"SELECT * FROM test_table;"
+**query sql 构造目标：** `SELECT * FROM test_table;`
 
-**查询构造器执行语法构造目标：**$drivers->table('test_table')->select('\*')->get();
+**查询构造器执行语法构造目标：** `$drivers->table('test_table')->select('\*')->get();`
+
+测试用的数据表请大家自己建立，这里就不单独演示了。
 
 我们回顾下 PDO 执行这个 query 语句的基本用法：
 
