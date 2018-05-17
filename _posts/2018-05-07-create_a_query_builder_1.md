@@ -91,7 +91,6 @@ class PDODriver implements ConnectorInterface
     }
     
 }
-
 ```
 
 基类实现了接口 ConnectorInterface
@@ -99,14 +98,12 @@ class PDODriver implements ConnectorInterface
 接口的代码如下：
 
 ```php
-
 namespace Drivers;
 
 interface ConnectorInterface {
     // 使用接口指明必须实现的共有方法
     public function __construct($config);
 }
-
 ```
 
 之后每次给基类添加 public 方法都会在接口中声明，以后不会再单独描述在接口中声明方法的代码。
@@ -132,7 +129,6 @@ public function prepare($sql, array $driver_options = [])
 {
     return $this->_pdo->prepare($sql, $driver_options);
 }
-
 ```
 
 ## 自动加载
@@ -161,7 +157,6 @@ cp composer.phar /usr/local/bin/composer # 将可执行文件放到已经设置�
     "name": "vagrant/query-builder",
     "require": {}
 }
-
 ```
 
 修改 composer.json，添加 autoload 字段，指定自动加载规范为 psr-4 ( 这里我的命名空间是 Drivers，所以设置为 Drivers 到 src/Drivers 目录的映射 )。
@@ -176,7 +171,6 @@ cp composer.phar /usr/local/bin/composer # 将可执行文件放到已经设置�
         }
     }
 }
-
 ```
 
 3、项目目录下运行 composer install，生成 vendor 目录，现在只要引入 vendor/autoload.php 后就可以直接通过命名空间自动加载 src/Drivers/ 下的文件啦
@@ -204,7 +198,6 @@ $results = $driver->query('select * from your_table');
 foreach ($results as $result) {
     var_dump($result);
 }
-
 ```
 
 4、根目录下运行 php test/test.php，查看结果是否如同你的预期
@@ -280,7 +273,6 @@ class Mysql extends PDODriver implements ConnectorInterface
     }
 
 }
-
 ```
 
 测试：
@@ -313,7 +305,6 @@ $results = $driver->query('select * from your_table');
 foreach ($results as $result) {
     var_dump($result);
 }
-
 ```
 
 ## PostgreSql、Sqlite 驱动类的创建
@@ -323,7 +314,6 @@ PostgreSql、Sqlite 驱动类的创建和 Mysql 驱动类的创建类似，这�
 Pgsql.php 代码如下：
 
 ```php
-
 namespace Drivers;
 
 use PDO;
@@ -377,8 +367,6 @@ class Pgsql extends PDODriver implements ConnectorInterface
         }
     }
 }
-
-
 ```
 
 Sqlite 基于内存或者文件，相对简单一些
@@ -386,7 +374,6 @@ Sqlite 基于内存或者文件，相对简单一些
 Sqlite.php 代码如下：
 
 ```php
-
 namespace Drivers;
 use PDO;
 use PDOException;
@@ -424,7 +411,6 @@ class Sqlite extends PDODriver implements ConnectorInterface
     }
 
 }
-
 ```
 
 PostgreSql 和 Sqlite 的测试这里就不详细说明了，感兴趣的可以自己写一下测试。

@@ -101,23 +101,23 @@ CI的model、视图、类库等的加载都是靠核心类Loader.php完成的，
 ```php
 // 循环路径数组
 foreach ($this->_ci_model_paths as $mod_path)
-   {
-   //如果不存在该路径，继续查找下一个路径
+{
+    //如果不存在该路径，继续查找下一个路径
     if ( ! file_exists($mod_path.'models/'.$path.$model.'.php'))
     {
-     continue;
+        continue;
     }
 
     // 加载model文件
-require_once($mod_path.'models/'.$path.$model.'.php');
+    require_once($mod_path.'models/'.$path.$model.'.php');
     if ( ! class_exists($model, FALSE))
     {
-     throw new RuntimeException($mod_path."models/".$path.$model.".php exists, but doesn't declare class ".$model);
+        throw new RuntimeException($mod_path."models/".$path.$model.".php exists, but doesn't declare class ".$model);
     }
     // 加载文件后不继续加载其他寻找路径中的文件
     // 寻找路径中的优先级：左边最高
     break;
-   }
+}
 ```
 
 分析代码后我们很容易看到，只要修改$_ci_model_paths 属性的初始值，添加一个寻找路径(公有路径)到寻找路径数组的最前，就能优先在这个路径中寻找、加载模型了。
@@ -142,25 +142,17 @@ CI提供了核心类扩展、替换功能，我们只需把Loader.php拷贝到ho
 // 公共搜索路径
 $common_path = 'application/common/';
 
-if(is_dir($common_path)){
+if (is_dir($common_path)) {
  // 取得绝对路径
- if (($_temp = realpath($common_path)) !== FALSE)
-  {
-   $common_path = $_temp;
-  }
-  else
-  {
-   $common_path = strtr(
-    rtrim($common_path, '/\\'),
-    '/\\',
-    DIRECTORY_SEPARATOR.DIRECTORY_SEPARATOR
-   );
-  }
- 
+    if (($_temp = realpath($common_path)) !== FALSE) {
+        $common_path = $_temp;
+    } else {
+        $common_path = strtr(rtrim($common_path, '/\\'), '/\\', DIRECTORY_SEPARATOR.DIRECTORY_SEPARATOR;
+    }
 } else {
- header('HTTP/1.1 503 Service Unavailable.', TRUE, 503);
- echo 'Your common folder path does not appear to be set correctly. Please open the following file and correct this: '.SELF;
- exit(3); // EXIT_CONFIG
+    header('HTTP/1.1 503 Service Unavailable.', TRUE, 503);
+    echo 'Your common folder path does not appear to be set correctly. Please open the following file and correct this: '.SELF;
+    exit(3); // EXIT_CONFIG
 }
 // 定义路径为常量
 define('APP_COMMON', $common_path.DIRECTORY_SEPARATOR);
@@ -199,15 +191,15 @@ define('APP_COMMON', $common_path.DIRECTORY_SEPARATOR);
 
 ```php
 // Grab the "hooks" definition file.
-  if (file_exists(APPPATH.'config/hooks.php'))
-  {
-   include(APPPATH.'config/hooks.php');
-  }
+if (file_exists(APPPATH.'config/hooks.php'))
+{
+    include(APPPATH.'config/hooks.php');
+}
 
-  if (file_exists(APPPATH.'config/'.ENVIRONMENT.'/hooks.php'))
-  {
-   include(APPPATH.'config/'.ENVIRONMENT.'/hooks.php');
-  }
+if (file_exists(APPPATH.'config/'.ENVIRONMENT.'/hooks.php'))
+{
+    include(APPPATH.'config/'.ENVIRONMENT.'/hooks.php');
+}
 ```
 相似的有很多配置文件的读取都是只能在APPPATH的config目录下读取，想要重写这个加载方案的话所要做的改动就太得不偿失了，当然这并不是CI的缺点，每个工具都有它的设计理念和使用场合，在实际需求中没有好坏与否，只说适不适用。
 

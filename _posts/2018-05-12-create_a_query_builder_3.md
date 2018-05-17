@@ -21,9 +21,7 @@ excerpt: 如果单单是执行 SELECT * FROM test_table; 这样的语句，使�
 PDO 可以通过占位符绑定参数，占位符可以使用 :name 的形式或者 ? 的形式。
 
 ```php
-
 $pdoSt = $pdo->prepare("SELECT * FROM test_table WHERE username = :username AND age = :age;");
-
 ```
 
 2、进行参数绑定，执行语句：
@@ -31,7 +29,6 @@ $pdoSt = $pdo->prepare("SELECT * FROM test_table WHERE username = :username AND 
 [PDOStatement::bindParam()](http://php.net/manual/en/pdostatement.bindparam.php) 和 [PDOStatement::bindValue()](http://php.net/manual/en/pdostatement.bindvalue.php) 方法可以绑定一个 PHP 变量到指定的占位符。 
 
 ```php
-
 $username = 'test';
 $age = 18;
 
@@ -101,7 +98,6 @@ protected function _bindParams()
         }
     }
 }
-
 ```
 
 修改 _execute() 方法：
@@ -135,7 +131,6 @@ protected function _execute()
         }
     }
 }
-
 ```
 
 ### where 方法
@@ -186,8 +181,6 @@ public function where()
     // 实现链式操作，返回当前实例
     return $this;
 }
-
-
 ```
 
 **2、生成占位符，保存占位符和绑定数据的映射**
@@ -211,7 +204,6 @@ protected static function _getPlh() // get placeholder
 {
     return ':'.md5(uniqid(mt_rand(), TRUE));
 }
-
 ```
 
 **性能相关的思考：**
@@ -232,7 +224,6 @@ A：如果在多线程的环境下，存在数据竞争，PHP 又没有好用的
 OK，占位符的生成方式搞定，那么我们开始在 where() 方法中使用吧。
 
 ```php
-
 public function where()
 {
     // 多个条件的默认连接符为 AND，即与的关系
@@ -298,7 +289,6 @@ public function where()
     // where 子句构造完毕
     return $this;
 }
-
 ```
 
 关于上述代码这里有几点要提一下：
@@ -318,7 +308,6 @@ protected $_operators = [
     'like', 'not like', 'like binary', 'rlike', 'regexp', 'not regexp',
     '&', '|', '^', '<<', '>>',
 ];
-
 ```
 
 PostgreSql 驱动类中：
@@ -330,7 +319,6 @@ protected $_operators = [
     'like', 'not like', 'ilike', 'similar to', 'not similar to',
     '&', '|', '#', '<<', '>>',
 ];
-
 ```
 
 Sqlite 驱动类中：
@@ -342,7 +330,6 @@ protected $_operators = [
     'like', 'not like', 'ilike',
     '&', '|', '<<', '>>',
 ];
-
 ```
 
 ### 测试
@@ -350,7 +337,6 @@ protected $_operators = [
 打开 test/test.php，修改代码：
 
 ```php
-
 require_once dirname(dirname(__FILE__)) . '/vendor/autoload.php';
 
 use Drivers\Mysql;
@@ -396,7 +382,6 @@ $results = $driver->table('test_table')
                   ->get();
 
 var_dump($results);
-
 ```
 
 执行看看，数据是不是如你所想。
@@ -408,7 +393,6 @@ var_dump($results);
 基类添加 \_condition\_constructor 方法：
 
 ```php
-
 // $args_num 为 where() 传入参数的数量
 // $params 为 where() 传入的参数数组
 // $construct_str 为要构造的子句的字符串，在 where() 方法中调用会传入 $this->_where_str 
@@ -453,7 +437,6 @@ protected function _condition_constructor($args_num, $params, &$construct_str)
     }
 
 }
-
 ```
 
 修改后的 where() 方法：
@@ -475,7 +458,6 @@ public function where()
 
     return $this;
 }
-
 ```
 
 这样我们就把可以通用的逻辑提出来了，趁热打铁，我们把 orWhere() 方法也添加到基类中。
@@ -499,6 +481,17 @@ public function orWhere()
 }
 ```
 
+构造语句 `SELECT * FROM test_table WHERE username = 'jack' OR username = 'mike';`:
+
+```php
+$results = $driver->table('test_table')
+                  ->select('*')
+                  ->where('username', 'jack')
+                  ->orWhere('username', 'mike')
+                  ->get();
+```
+
+
 ## 关键字冲突
 
 熟悉数据库的朋友们应该知道，每种数据库都有一些关键字，一部分是 SQL 语句的关键字，另一部分是数据库自己的关键字。既然有关键字，那么就避免不了用户键入的数据和关键字重名的问题，比如表名和关键字重名、字段名 (别名) 和关键字重名等。
@@ -518,7 +511,6 @@ Mysql 驱动类中添加：
 ```php
 // 因为次属性不会改变，使用 static 关键字
 protected static $_quote_symbol = '`';
-
 ```
 
 PostgreSql 和 Sqlite 同理，这里不单独演示了。
@@ -531,13 +523,12 @@ protected static function _quote($word)
 {
     return static::$_quote_symbol.$word.static::$_quote_symbol;
 }
-
 ```
 
 有了这个方法，我们可以简单的防止一个字符串关键字冲突了。但是在实际应用中还远不够。
 
 首先，在书写 SQL 时字段的表述有很多模式
-- 别名：username as name
+- 别名：username as name (这里不对省略 as 的情况做处理，请不要省略 as 关键字)
 - 点号：table_name.field
 - SQL 函数做为列：COUNT(field) 
 
@@ -598,7 +589,6 @@ public function table($table)
 
     return $this;
 }
-
 ```
 
 修改 select() 方法：
@@ -621,14 +611,12 @@ public function select()
 
     return $this;
 }
-
 ```
 
 
 修该用于条件构造的 \_condition\_constructor() 方法：
 
 ```php
-
 protected function _condition_constructor($args_num, $params, &$construct_str)
 {
     if( ! $args_num || $args_num > 3) {
@@ -674,18 +662,15 @@ protected function _condition_constructor($args_num, $params, &$construct_str)
     }
 
 }
-
 ```
 
 现在我们给要查的数据表中添加一个名为 group 的字段，构造一下 `SELECT * FROM test_table where group = 'test';` 这个语句，看是否会报错呢？
 
 ```php
-
 $results = $driver->table('test_table')
     ->select('*')
     ->where('group', 'test')
     ->get();
-
 ```
 
 Just do it!

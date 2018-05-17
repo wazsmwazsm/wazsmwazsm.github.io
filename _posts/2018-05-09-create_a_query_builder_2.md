@@ -45,7 +45,6 @@ PDO::prepare() 方法提供了防注入、参数绑定的机制，可以指定�
 在基类 PDODriver.php 中添加属性作为构造字符串：
 
 ```php
-
 protected $_table = '';        // table 名
 protected $_prepare_sql = '';  // prepare 方法执行的 sql 语句
 protected $_cols_str = ' * ';  // 需要查询的字段，默认为 * (全部)
@@ -55,7 +54,6 @@ protected $_groupby_str = '';  // group by 子句
 protected $_having_str = '';   // having 子句 (配合 group by 使用)
 protected $_join_str = '';     // join 子句
 protected $_limit_str = '';    // limit 子句
-
 ```
 
 ### 基础方法的创建
@@ -65,7 +63,6 @@ protected $_limit_str = '';    // limit 子句
 添加 _buildQuery() 方法，用来构造 sql 字符串：
 
 ```php
-
 protected function _buildQuery()
 {
     $this->_prepare_sql = 'SELECT '.$this->_cols_str.' FROM '.$this->_table.
@@ -75,8 +72,6 @@ protected function _buildQuery()
         $this->_orderby_str.
         $this->_limit_str;
 }
-
-
 ```
 
 添加 table() 方法，用来设置表名：
@@ -88,7 +83,6 @@ public function table($table)
 
     return $this; // 为了链式调用，返回当前实例
 }
-
 ```
 
 添加 select() 方法，这里使用可变参数灵活处理传入：
@@ -137,7 +131,6 @@ public function get()
 
     return $pdoSt->fetchAll(PDO::FETCH_ASSOC); // 获取一个以键值数组形式的结果集
 }
-
 ```
 
 ### 测试
@@ -166,7 +159,6 @@ $driver = new Mysql($config);
 $results = $driver->table('test_table')->select('*')->get();
 
 var_dump($results);
-
 ```
 
 之后为了节省篇幅，一些通用的方法只使用 Mysql 驱动类作为测试对象，PostgreSql 和 Sqlite 请读者自己进行测试，之后不会再单独说明。
@@ -189,9 +181,7 @@ protected function _execute()
     } catch (PDOException $e) {
         throw $e;
     }
-
 }
-
 ```
 
 由于将逻辑分离到另一个方法中，get() 方法获取不到 PDOStatement 实例，因此将 PDOStatement 实例保存到基类的属性中：
@@ -252,7 +242,6 @@ protected function _execute()
     }
 
 }
-
 ```
 
 ## row() 方法
@@ -308,7 +297,6 @@ protected function _isTimeout(PDOException $e)
         $e->errorInfo[1] == 7         // no connection to the server (for postgresql)
     );
 }
-
 ```
 
 修改 _execute() 方法，添加断线重连功能：
@@ -341,7 +329,6 @@ protected function _execute()
         }
     }
 }
-
 ```
 
 顺便把之前暴露的 PDO 的原生接口也支持断线重连：
@@ -415,7 +402,6 @@ public function prepare($sql, array $driver_options = [])
         }
     }
 }
-
 ```
 
 
