@@ -222,8 +222,6 @@ protected function _reset()
     $this->_having_str = '';
     $this->_join_str = '';
     $this->_limit_str = '';
-    $this->_insert_str = '';
-    $this->_update_str = '';
     $this->_bind_params = [];
 }
 ```
