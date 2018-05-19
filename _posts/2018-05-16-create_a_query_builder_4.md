@@ -40,7 +40,7 @@ public function whereIn($field, array $data, $condition = 'IN', $operator = 'AND
     if( ! in_array($condition, ['IN', 'NOT IN']) || ! in_array($operator, ['AND', 'OR'])) {
         throw new \InvalidArgumentException("Error whereIn mode");
     }
-    // 生产占位符，绑定数据
+    // 生成占位符，绑定数据
     foreach ($data as $key => $value) {
         $plh = self::_getPlh();
         $data[$key] = $plh;
@@ -57,7 +57,7 @@ public function whereIn($field, array $data, $condition = 'IN', $operator = 'AND
 }
 ```
 
-关于上述代码，由于 where in、where not in、or where in、or where not in 这写方法的区别只是关键字的区别，对于字符串来说只需替换关键字即可。所有对于这些方法，为了方便我们把这些模式的关键字作为方法的参数传入，可以提高代码的重用性。
+关于上述代码，由于 where in、where not in、or where in、or where not in 这写方法的区别只是关键字的区别，对于字符串来说只需替换关键字即可。所以对于这些方法，为了方便，我们把这些模式的关键字作为方法的参数传入，可以提高代码的重用性。
 
 那么，另外三种模式的代码可以这么写：
 
@@ -103,7 +103,7 @@ public function whereBetween($field, $start, $end, $operator = 'AND')
     if( ! in_array($operator, ['AND', 'OR'])) {
         throw new \InvalidArgumentException("Logical operator");
     }
-    // 生产占位符，绑定数据
+    // 生成占位符，绑定数据
     $start_plh = self::_getPlh();
     $end_plh = self::_getPlh();
     $this->_bind_params[$start_plh] = $start;
@@ -127,7 +127,7 @@ public function orWhereBetween($field, $start, $end)
 
 ### where null 子句
 
-前面的 where 子句中，使用单条件模式时，数据为 NULL 时则进行 IS NULL 的判断。但是我们想要一个更灵活和语义清晰的接口，所以这里为 NULL 的判断单独编写方法。
+前面的 where 子句中使用单条件模式数据为 NULL 时则进行 IS NULL 的判断。但是我们想要一个更灵活、语义更清晰的接口，所以这里为 NULL 的判断单独编写方法。
 
 where null 系列代码：
 
@@ -172,7 +172,7 @@ public function orWhereNotNull($field)
 SELECT * FROM table1 where exists (SELECT * FROM table2);
 ```
 
-没错，和之前构造的语句不同，where exists 子句存在子查询。之前的 sql 构造都是通过 _buildQuery() 方法按照查询的顺序构造的，那么如何对子查询进行构造呢？子查询中的 where 子句和外层查询的 where 子句同时存在时，又该怎么区分呢？
+没错，和之前构造的语句不同，where exists 子句存在子查询。之前的 sql 构造都是通过 _buildQuery() 方法按照一定的顺序构造的，那么如何对子查询进行构造呢？子查询中的 where 子句和外层查询的 where 子句同时存在时，又该怎么区分呢？
 
 首先，观察一下有子查询的 SQL，可以看出：**子查询是一个独立的查询语句。**
 
@@ -243,11 +243,11 @@ use Closure;
 
 我们先理一下构造一个普通的 SQL 的步骤：依次构造各个查询子句、使用 _buildQuery() 方法将这些子句按照固定顺序组合成 SQL。
 
-那么在有子查询的过程中，意味着这样的步骤要经过两次，但是由于要传入当前实例 (另外新建实例需要创建连接，更复杂)，第二次查询构建会覆盖掉第一次构建的结果。所以，我们这里的现场就是这些构造用的子句字符串。
+那么在有子查询的过程中，意味着这样的步骤要经过两次，但是由于要传入当前实例 (另外新建实例的话会创建新连接)，第二次查询构造会覆盖掉第一次构造的结果。所以，我们这里的现场就是这些构造用的子句字符串。
 
-而且有了现场的保护和恢复，即使在闭包中调用闭包 (即子查询中嵌套子查询) 的情形下也能正确的构造需要的 SQL 语句。(有没有觉得很想递归呢？的确这里是借鉴了栈的使用思路。)
+有了现场的保护和恢复，即使在闭包中调用闭包 (即子查询中嵌套子查询) 的情形下也能正确的构造需要的 SQL 语句。(有没有觉得很像递归呢？的确这里是借鉴了栈的使用思路。)
 
-首先我们需要一个保存构建字符串名称的数组 (用来获取构造字符串属性)，在基类添加属性 _buildAttrs：
+首先我们需要一个保存构造字符串名称的数组 (用来获取构造字符串属性)，在基类添加属性 _buildAttrs：
 ```php
 // 这里保存了需要保护现场的构造字符串名称
 protected $_buildAttrs = [
@@ -287,7 +287,7 @@ protected function _reStoreBuildAttr(array $data)
 }
 ```
 
-当然，保护了现场后，子查询要使用实例的属性时，需要的是一个初始状态的属性，所以我们还需要一个可以重置这些构造字符串的方法：
+当然，保护了现场后，子查询要使用实例的属性时需要的是一个初始状态的属性，所以我们还需要一个可以重置这些构造字符串的方法：
 
 ```php
 protected function _resetBuildAttr()
@@ -325,20 +325,20 @@ public function whereExists(Closure $callback, $condition = 'EXISTS', $operator 
     // 保护现场，将构造字符串属性都保存起来
     $store = $this->_storeBuildAttr();
 
-    /**************** 开始子查询 SQL 的构建 ****************/
+    /**************** 开始子查询 SQL 的构造 ****************/
         // 复位构造字符串
         $this->_resetBuildAttr();
         // 调用闭包，将当前实例作为参数传入
         call_user_func($callback, $this);
         // 子查询构造字符串数组    
         $sub_attr = [];
-        // 构建子查询 SQL
+        // 构造子查询 SQL
         $this->_buildQuery();
         // 保存子查询构造字符串，用于外层调用
         foreach ($this->_buildAttrs as $buildAttr) {
             $sub_attr[$buildAttr] = $this->$buildAttr;
         }
-    /**************** 结束子查询 SQL 的构建 ****************/
+    /**************** 结束子查询 SQL 的构造 ****************/
 
     // 恢复现场
     $this->_reStoreBuildAttr($store);
@@ -369,7 +369,7 @@ whereNotExists()、orWhereExists() 等模式就不单独演示了。完整代码
 
 **优化**
 
-where exists 子句用到了子查询，单并不只有 where exists 使用子查询。最直接的 `SELECT * FROM (SELECT * FROM table);` 子查询语句，where in 子查询语句也用到子查询，那么重复的逻辑要提出来，Don't Repeat Yourself！
+where exists 子句用到了子查询，但并不只有 where exists 使用子查询。最直接的 `SELECT * FROM (SELECT * FROM table);` 子查询语句，where in 子查询语句也用到子查询，那么重复的逻辑要提出来，Don't Repeat Yourself！
 
 基类中新建 _subBuilder() 方法，用来进行现场的保护恢复、子查询 SQL 的构造：
 ```php
@@ -474,8 +474,8 @@ public function fromSub(Closure $callback)
 ```
 
 上述代码需要注意的地方：
-- FROM 子查询的语句需要给子查询一个别名做表名，否则是语法错误，这里我们选择 uniqid() 函数生成一个随机的别名。
-- 这里是用 _table 属性报存了子查询字符串，如果同时调用了 table() 方法会有冲突。
+- FROM 子查询语句需要给子查询一个别名做表名，否则是语法错误，这里我们选择 uniqid() 函数生成一个随机的别名。
+- 这里是用 _table 属性保存了子查询字符串，如果同时调用了 table() 方法会有冲突。
 
 构造 SQL `SELECT username, age FROM (SELECT * FROM test_table WHERE class_id = 3)`：
 
@@ -504,7 +504,7 @@ AND 和 OR 我们可以用 where() 和 orWhere() 方法连接，但是圆括号�
 
 **思路**
 
-参考含有子查询的子句，我们可以把圆括号包裹的内部作为一个“子查询”字符串来看待，区别在于，我们不像是子查询中取整个子查询的 SQL，而是只取 where 子句的构造字符串。
+参考含有子查询的 SQL，我们可以把圆括号包裹的内部作为一个“子查询”字符串来看待，区别在于，我们不像是子查询构造中取整个子查询的 SQL，而是只取 where 子句的构造字符串。
 
 Ok，有了思路，那就编码吧：
 
