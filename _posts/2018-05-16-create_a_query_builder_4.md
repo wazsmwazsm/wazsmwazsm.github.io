@@ -542,3 +542,7 @@ $results = $driver->table('test_table')
 ```
 
 orWhereBrackets() 就不单独演示了。
+
+## 参考
+
+【1】[Laravel - Query Builder](https://laravel.com/docs/5.1/queries)
