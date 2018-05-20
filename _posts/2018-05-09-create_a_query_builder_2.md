@@ -161,6 +161,8 @@ $results = $driver->table('test_table')->select('*')->get();
 var_dump($results);
 ```
 
+注：上述代码中由于 \_cols\_str 属性默认为 ' * '，所以在查询全部字段时省略 select() 方法的调用也是可以的。
+
 之后为了节省篇幅，一些通用的方法只使用 Mysql 驱动类作为测试对象，PostgreSql 和 Sqlite 请读者自己进行测试，之后不会再单独说明。
 
 ## 优化
