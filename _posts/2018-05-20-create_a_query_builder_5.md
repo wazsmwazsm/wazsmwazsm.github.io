@@ -19,6 +19,25 @@ where 相关的子句构造完成后，我们继续构造其它子句。这一�
 
 为了更方便的获得聚合数据，我们需要为其单独编写方法。
 
+
+### getList() 方法
+
+获得某一列的方法可以由 PDO::FETCH_COLUMN 来完成。
+
+基类添加 getList() 方法：
+
+```php
+public function getList($field)
+{
+    $this->_cols_str = ' '.self::_quote($field).' ';
+    $this->_buildQuery();
+    $this->_execute();
+    // 获取一列数据
+    return $this->_pdoSt->fetchAll(PDO::FETCH_COLUMN, 0);
+}
+```
+
+
 ### count() 方法
 
 基类添加 count() 方法：
