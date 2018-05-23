@@ -180,7 +180,7 @@ SELECT * FROM table1 where exists (SELECT * FROM table2);
 
 当然是可以的。不过，如何去单独构造子查询语句呢？如果子查询中还有子查询语句呢？
 
-我们先看下 laravel 中的 where exists 构造语句是什么样的：
+我们先看下 laravel 中的 where exists 构造语句是什么样的【1】：
 
 ```php
 DB::table('users')

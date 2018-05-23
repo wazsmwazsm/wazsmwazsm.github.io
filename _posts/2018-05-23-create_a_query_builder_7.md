@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "写一个“特殊”的查询构造器 - (七、DML 语句、事务)"
-date:   2018-05-22 11:40:16
+date:   2018-05-23 11:40:16
 categories: PHP
 excerpt: 查询语句 (DQL) 的构造功能开发完毕，我们再给查询构造器增加一些对 DML (Data Manipulation Language) 语句的支持，如简单的 insert、update、delete 操作。
 ---
