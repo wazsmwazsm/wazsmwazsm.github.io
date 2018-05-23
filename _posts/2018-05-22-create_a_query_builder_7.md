@@ -101,7 +101,7 @@ $insert_data = [
     'age'      => 18,
 ];
 
-$results = $driver->table('user_table')->insert($insert_data);
+$results = $driver->table('test_table')->insert($insert_data);
 ```
 
 
@@ -129,7 +129,7 @@ $insert_data = [
     'age'      => 18,
 ];
 
-$lastId = $driver->table('user_table')->insertGetLastId($insert_data);
+$lastId = $driver->table('test_table')->insertGetLastId($insert_data);
 ```
 
 **个体差异**
@@ -175,4 +175,194 @@ OK，我们再来测试看看，是不是就好用了呢？
 
 ## update
 
+做完 insert，update 就很简单了，不同的是为了防止全局更新的失误发生，update 构造时强行要求使用 where 子句。
 
+同样的，添加 \_update\_str 属性，修改 _reset() 函数：
+
+```php
+protected $_update_str = '';
+
+...
+
+protected function _reset()
+{
+    $this->_table = '';
+    $this->_prepare_sql = '';
+    $this->_cols_str = ' * ';
+    $this->_where_str = '';
+    $this->_orderby_str = '';
+    $this->_groupby_str = '';
+    $this->_having_str = '';
+    $this->_join_str = '';
+    $this->_limit_str = '';
+    $this->_insert_str = '';
+    $this->_update_str = '';
+    $this->_bind_params = [];
+}
+```
+
+构造 update 语句的方法：
+
+```php
+protected function _buildUpdate()
+{
+    $this->_prepare_sql = 'UPDATE '.$this->_table.$this->_update_str.$this->_where_str;
+}
+```
+
+基类中添加 update() 方法：
+
+```php
+public function update(array $data)
+{
+    // 检测有没有设置 where 子句
+    if(empty($this->_where_str)) {
+        throw new \InvalidArgumentException("Need where condition");
+    }
+    // 构建语句、参数绑定
+    $this->_update_str = ' SET ';
+    foreach ($data as $key => $value) {
+        $plh = self::_getPlh();
+        $this->_bind_params[$plh] = $value;
+        $this->_update_str .= ' '.self::_wrapRow($key).' = '.$plh.',';
+    }
+
+    $this->_update_str = rtrim($this->_update_str, ',');
+
+    $this->_buildUpdate();
+    $this->_execute();
+    // 返回影响的行数
+    return $this->_pdoSt->rowCount();
+}
+```
+
+更新数据示例：
+
+```php
+$update_data = [
+    'username' => 'lucy',
+    'age'      => 22,
+];
+
+$results = $driver->table('test_table')
+            ->where('username', 'jack')
+            ->update($update_data);
+```
+
+## delete
+
+相比 insert、update，delete 语句更为简单，只需 where 子句即可。和 update 一样，需要防止误操作删除所有数据。
+
+构造 delete 语句的方法：
+
+```php
+protected function _buildDelete()
+{
+    $this->_prepare_sql = 'DELETE FROM '.$this->_table.$this->_where_str;
+}
+```
+
+基类中添加 delete() 方法：
+
+```php
+public function delete()
+{
+    // 检测有没有设置 where 子句
+    if(empty($this->_where_str)) {
+        throw new \InvalidArgumentException("Need where condition");
+    }
+
+    $this->_buildDelete();
+    $this->_execute();
+
+    return $this->_pdoSt->rowCount();
+}
+```
+
+删除数据示例：
+
+```php
+$results = $driver->table('test_table')
+            ->where('age', 18)
+            ->delete();
+```
+
+## 事务
+
+既然有了 DML 操作，那么就少不了事务。对于事务，我们可以直接使用 PDO 提供的 [PDO::beginTransaction()](http://php.net/manual/en/pdo.begintransaction.php)、[PDO::commit()](http://php.net/manual/en/pdo.commit.php)、[PDO::rollBack()](http://php.net/manual/en/pdo.rollback.php)、[PDO::inTransaction()](http://php.net/manual/en/pdo.intransaction.php) 方法来实现。
+
+基类添加 beginTrans() 方法：
+
+```php
+// 开始事务
+public function beginTrans()
+{
+    try {
+        return $this->_pdo->beginTransaction();
+    } catch (PDOException $e) {
+        // 断线重连
+        if ($this->_isTimeout($e)) {
+
+            $this->_closeConnection();
+            $this->_connect();
+
+            try {
+                return $this->_pdo->beginTransaction();
+            } catch (PDOException $e) {
+                throw $e;
+            }
+
+        } else {
+            throw $e;
+        }
+    }
+}
+```
+
+> 注：因为 PDO::beginTransaction() 也是和 PDO::prepare() 一样会连接数据库的方法，所以需要做断线重连的操作。
+
+commitTrans() 方法：
+
+```php
+// 提交事务
+public function commitTrans()
+{
+    return $this->_pdo->commit(); 
+}
+```
+rollBackTrans() 方法：
+
+```php
+// 回滚事务
+public function rollBackTrans()
+{
+    if ($this->_pdo->inTransaction()) {
+        // 如果已经开始了事务，则运行回滚操作
+        return $this->_pdo->rollBack();
+    }
+}
+```
+
+事务使用示例：
+
+```php
+// 注册事务
+$driver->beginTrans();
+$results = $driver->table('test_table')
+            ->where('age', 18)
+            ->delete();
+$driver->commitTrans(); // 确认删除
+
+// 回滚事务
+$driver->beginTrans();
+$results = $driver->table('test_table')
+            ->where('age', 18)
+            ->delete();
+$driver->rollBackTrans(); // 撤销删除
+```
+
+## 参考
+
+【1】[PHP Manual - PDO::lastInsertId](http://php.net/manual/en/pdo.lastinsertid.php)
+
+【2】[PostgreSQL Documentation - Returning Data From Modified Rows](https://www.postgresql.org/docs/10/static/dml-returning.html)
