@@ -140,7 +140,7 @@ public function orHaving()
 }
 ```
 
-这里我们也留一个处理原生字符串的 havingRaw() 方法 (这里参考了 laravel)，方便构造 `HAVING SUM(price) > 1000 ` 这类子句：
+这里我们也留一个处理原生字符串的 havingRaw() 方法 (手动填写数据，不进行数据绑定)：
 
 ```php
 public function havingRaw($string)
