@@ -67,7 +67,7 @@ A：因为我自己用 PHP 开发最多，重要的是 workerman 是 PHP 编写�
 
 ***
 
-Q：支持那些数据库
+Q：支持哪些数据库
 
 A：目前支持了 Mysql、Postgresql、Sqlite 这三个数据库，而且全部通过了单元测试
 
