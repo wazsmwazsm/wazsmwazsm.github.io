@@ -174,7 +174,8 @@ $results = $driver->table('test_table')
 ```php
 public function orderBy($field, $mode = 'ASC')
 {
-    if( ! in_array($mode, ['ASC', 'DESC'])) {
+    $mode = strtoupper($mode);
+    if ( ! in_array($mode, ['ASC', 'DESC'])) {
         throw new \InvalidArgumentException("Error order by mode");
     }
     // 初次调用？
