@@ -6,7 +6,9 @@ categories: PHP
 excerpt: 查询构造器 (query builder)，顾名思义，它的目的就是以简便的形式构造、执行 SQL，为查询数据库的业务提供了方便好用的接口，一些知名的 web 框架如 PHP 的 Laravel、CodeIgniter、ThinkPHP 等都提供了好用的查询构造器。
 
 ---
+## 更新
 
+此项目已经从 [WorkerA](https://github.com/wazsmwazsm/WorkerA) 中拆分为独立项目，完整代码请到 [wazsmwazsm/DB](https://github.com/wazsmwazsm/DB) 中查看。
 ## 文章目录
 
 [写一个“特殊”的查询构造器 - (前言)]({{ site.baseurl }}/php/2018/05/06/create_a_query_builder_0.html)
