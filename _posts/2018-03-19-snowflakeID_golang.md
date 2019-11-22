@@ -203,7 +203,7 @@ func main() {
 }
 ```
 
-完整的程序实例 ：[点我查看](https://github.com/wazsmwazsm/go_prc/blob/master/snowflake/user_snowflake.go)
+完整的程序实例 ：[点我查看](https://github.com/wazsmwazsm/go_prc/blob/master/applications/snowflake/user_snowflake.go)
 
 ### 上线使用
 你可以用 go 的 net/http 包处理并发请求，生成 ID 并且返回 http 响应结果。
