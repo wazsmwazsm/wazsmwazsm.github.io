@@ -3,7 +3,7 @@ layout: post
 title:  "实现 go 的查询构造器"
 date:   2020-01-05 09:25:08
 categories: golang
-excerpt: 针对直接编写 SQL 不灵活, 使用 ORM 语法繁琐语义不明确, 提供了一种 orm 和 raw sql 之间的中间方案, 查询构造器 (Query Builder)
+excerpt: 针对直接编写 SQL 不灵活, 使用 ORM 语法繁琐语义不明确, 提供一种 orm 和 raw sql 之间的中间方案, 查询构造器 (Query Builder)
 ---
 
 ## 前言
